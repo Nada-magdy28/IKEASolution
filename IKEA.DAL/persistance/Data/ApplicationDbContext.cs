@@ -5,13 +5,14 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using IKEA.DAL.Models.Departments;
+using IKEA.DAL.Models.Employees;
 using Microsoft.EntityFrameworkCore;
 
 namespace IKEA.DAL.persistance.Data
 {
-    public class ApplictionDbContext : DbContext
+    public class ApplicationDbContext : DbContext
     {
-        public ApplictionDbContext(DbContextOptions<ApplictionDbContext> options) : base(options)
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
         }
 
@@ -25,6 +26,7 @@ namespace IKEA.DAL.persistance.Data
         {
            modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         }
-        public DbSet<Department> Departments { get; set; } 
+        public DbSet<Department> Departments { get; set; }
+        public DbSet<Employee> Employees { get; set; }
     }
 }

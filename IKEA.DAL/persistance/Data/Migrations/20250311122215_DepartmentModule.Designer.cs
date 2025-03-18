@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace IKEA.DAL.persistance.Data.Migrations
 {
-    [DbContext(typeof(ApplictionDbContext))]
+    [DbContext(typeof(ApplicationDbContext))]
     [Migration("20250311122215_DepartmentModule")]
     partial class DepartmentModule
     {

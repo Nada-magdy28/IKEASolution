@@ -4,10 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using IKEA.DAL.Models.Departments;
+using Microsoft.EntityFrameworkCore;
+using IKEA.DAL.persistance.Data;
+using IKEA.DAL.persistance.Reposatrios.Departments;
 
 namespace IKEA.DAL.persistance.Reposatrios.Departments
 {
-    internal class DepartmentRepository : IDepartmentRepository
+    public class DepartmentRepository : IDepartmentRepository
     {
         private readonly ApplicationDbContext dbContext;
         public DepartmentRepository(ApplicationDbContext context)
@@ -18,9 +21,9 @@ namespace IKEA.DAL.persistance.Reposatrios.Departments
         public IEnumerable<Department> GetALL(bool WithNoTarcking = true)
         {
             if (WithNoTarcking)
-                return dbContext.Departments.AsNoTracking().ToList();
+                return dbContext.Departments.Where(D=>D.IsDeleted == false).AsNoTracking().ToList();
 
-            return dbContext.Departments.ToList();
+            return dbContext.Departments.Where(D => D.IsDeleted == false).ToList();
         }
 
         public Department? GetById(int id)
@@ -44,7 +47,8 @@ namespace IKEA.DAL.persistance.Reposatrios.Departments
 
         public int Delete(Department department)
         {
-            dbContext.Departments.Remove(department);
+            department.IsDeleted = true;
+            dbContext.Departments.Update(department);
             return dbContext.SaveChanges();
         }
     }

@@ -1,6 +1,9 @@
 using IKEA.DAL.persistance.Data;
 using IKEA.DAL.persistance.Reposatrios.Departments;
+using IKEA.PL.Controllers;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Builder;
+using IKEA.BLL.Services.DepartmentServices;
 
 namespace IKEA.PL
 {
@@ -14,11 +17,12 @@ namespace IKEA.PL
             #region Configure services
             builder.Services.AddControllersWithViews();
 
-            builder.Services.AddDbContext<ApplictionDbContext>(options =>
+            builder.Services.AddDbContext<ApplicationDbContext>(options =>
             {
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
             });
             builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
+            builder.Services.AddScoped<IDepartmentServices,DepartmentServices>();
 
 
             //builder.Services.AddScoped<ApplictionDbContext>();
