@@ -17,8 +17,8 @@ namespace IKEA.DAL.Models.Employees
         public string? Email { get; set; }
         public string? PhoneNumber { get; set; }
         public DateOnly? HiringDate { get; set; }
-        public string Gender { get; set; } = null!;
-        public string EmployeeType { get; set; } = null!;
+        public Gender Gender { get; set; } 
+        public EmployeeType EmployeeType { get; set; } 
 
     }
 }
