@@ -4,19 +4,21 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using IKEA.DAL.Models.Departments;
-using Microsoft.EntityFrameworkCore;
+using IKEA.DAL.Models.Employees;
 using IKEA.DAL.persistance.Data;
-using IKEA.DAL.persistance.Reposatrios.Departments;
 using IKEA.DAL.persistance.Reposatrios._Generic;
+using Microsoft.EntityFrameworkCore;
 
-namespace IKEA.DAL.persistance.Reposatrios.Departments
+namespace IKEA.DAL.persistance.Reposatrios.Employees
 {
-    public class DepartmentRepository :GenericRepository<Department>,IDepartmentRepository
+    public class EmployeeRepository : GenericRepository<Employee>,IEmployeeRepository
     {
         private readonly ApplicationDbContext dbContext;
-        public DepartmentRepository(ApplicationDbContext context) : base(context)
+        public EmployeeRepository(ApplicationDbContext context) : base(context)
         {
             dbContext = context;
         }
+
+      
     }
 }

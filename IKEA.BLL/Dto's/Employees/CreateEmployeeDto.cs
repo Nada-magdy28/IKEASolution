@@ -3,13 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using IKEA.DAL.Common.Enums;
 
-namespace IKEA.DAL.Models.Employees
+namespace IKEA.BLL.Dto_s.Employees
 {
-    public class Employee :ModelBase
+    public class CreateEmployeeDto
     {
-        public string Name { get; set; } = null!;   
+        public string Name { get; set; } = null!;
         public int? Age { get; set; }
         public string? Address { get; set; }
         public decimal? Salary { get; set; }

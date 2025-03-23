@@ -6,29 +6,36 @@ using System.Threading.Tasks;
 using IKEA.DAL.Common.Enums;
 using IKEA.DAL.Models.Employees;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace IKEA.DAL.persistance.Data.Configurations.EmployeeConfigurations
 {
     public class EmployeeConfigurations : IEntityTypeConfiguration<Employee>
     {
-        public void Configure(Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder<Employee> builder)
-        {
-            builder.Property(e => e.Name).HasColumnType("varchar(50)").IsRequired();
-            builder.Property(e => e.Address).HasColumnType("varchar(100)").IsRequired();
-            builder.Property(e => e.Salary).HasColumnType("decimal(8,2)").IsRequired();
-            builder.Property(e => e.Gender).HasConversion
-                (
-                  (gender)=>gender.ToString(),
-                  (gender) => (Gender)Enum.Parse(typeof(Gender), gender)
-                );
-            builder.Property(e => e.EmployeeType).HasConversion
-                (
-                  (Type) => Type.ToString(),
-                  (Type) => (EmployeeType)Enum.Parse(typeof(EmployeeType), Type)
-                );
-            builder.Property(D => D.CreatedOn).HasDefaultValueSql("Getdate()");
-            builder.Property(D => D.LastModifiedOn).HasComputedColumnSql("Getdate()");
+        
+            public void Configure(EntityTypeBuilder<Employee> builder)
+            {
+                builder.Property(E => E.Name).HasColumnType("varchar(50)").IsRequired();
+                builder.Property(E => E.Address).HasColumnType("varchar(100)");
+                builder.Property(E => E.Salary).HasColumnType("decimal(8,2)");
+                builder.Property(E => E.Gender).HasConversion
+                    (
+                         (gender) => gender.ToString(),
+                         (gender) => (Gender)Enum.Parse(typeof(Gender), gender)
+                    );
+                builder.Property(E => E.EmployeeType).HasConversion
+                    (
+                         (Type) => Type.ToString(),
+                         (Type) => (EmpployeeType)Enum.Parse(typeof(EmpployeeType), Type)
+                    );
+                // Development Usage
+                builder.Property(D => D.CreatedOn).HasDefaultValueSql("Getdate()");
+                builder.Property(D => D.LastModifiedOn).HasComputedColumnSql("Getdate()");
+            }
 
-        }
+       
     }
 }
+
+    
+

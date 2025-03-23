@@ -10,5 +10,6 @@ namespace IKEA.DAL.Common.Enums
     {
         male= 1,
         female= 2,
+        Enum = 3,
     }
 }

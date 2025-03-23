@@ -5,11 +5,12 @@ using System.Text;
 using System.Threading.Tasks;
 using IKEA.DAL.Common.Enums;
 
-namespace IKEA.DAL.Models.Employees
+namespace IKEA.BLL.Dto_s.Employees
 {
-    public class Employee :ModelBase
+    public class EmployeeDetailsDto
     {
-        public string Name { get; set; } = null!;   
+        public int Id { get; set; }
+        public string Name { get; set; } = null!;
         public int? Age { get; set; }
         public string? Address { get; set; }
         public decimal? Salary { get; set; }
@@ -19,6 +20,12 @@ namespace IKEA.DAL.Models.Employees
         public DateOnly? HiringDate { get; set; }
         public string Gender { get; set; } = null!;
         public string EmployeeType { get; set; } = null!;
+        #region Adminstrator
+        public int CreatedBy { get; set; }
+        public DateTime CreatedOn { get; set; }
+        public int  LastModifiedBy { get; set; }
+        public DateTime LastModifiedOn { get; set; }
+        #endregion
 
     }
 }
