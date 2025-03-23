@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using IKEA.BLL.Dto_s.Employees;
+using IKEA.DAL.Common.Enums;
 using IKEA.DAL.Models.Employees;
 using IKEA.DAL.persistance.Reposatrios.Employees;
 
@@ -46,8 +47,8 @@ namespace IKEA.BLL.Services.EmployeeServices
                     Email = employee.Email,
                     PhoneNumber = employee.PhoneNumber,
                     HiringDate = employee.HiringDate,
-                    Gender = employee.Gender,
-                    EmployeeType = employee.EmployeeType,
+                    Gender =employee.Gender.ToString(),
+                    EmployeeType = employee.EmployeeType.ToString(),
                     LastModifiedBy = employee.LastModifiedBy,
                     LastModifiedOn = employee.LastModifiedOn,
                     CreatedBy = employee.CreatedBy,
@@ -71,8 +72,8 @@ namespace IKEA.BLL.Services.EmployeeServices
                 Email = employeeDto.Email,
                 PhoneNumber = employeeDto.PhoneNumber,
                 HiringDate = employeeDto.HiringDate,
-                Gender = employeeDto.Gender,
-                EmployeeType = employeeDto.EmployeeType,
+                Gender=Enum.Parse<Gender>(employeeDto.Gender),
+                EmployeeType = Enum.Parse<EmployeeType>(employeeDto.EmployeeType),
                 CreatedBy = 1,
                 CreatedOn = DateTime.Now,
                 LastModifiedBy = 1,
@@ -94,8 +95,8 @@ namespace IKEA.BLL.Services.EmployeeServices
                 Email = employeeDto.Email,
                 PhoneNumber = employeeDto.PhoneNumber,
                 HiringDate = employeeDto.HiringDate,
-                Gender = employeeDto.Gender,
-                EmployeeType = employeeDto.EmployeeType,
+                Gender = Enum.Parse<Gender>(employeeDto.Gender),
+                EmployeeType = Enum.Parse<EmployeeType>(employeeDto.EmployeeType),
                 LastModifiedBy = 1,
                 LastModifiedOn = DateTime.Now,
 
