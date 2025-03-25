@@ -24,6 +24,7 @@ namespace IKEA.PL.Controllers
             return View(Departments);
         }
         #endregion
+
         #region Details
         [HttpGet]
         public IActionResult Details(int? id)
@@ -42,6 +43,7 @@ namespace IKEA.PL.Controllers
 
 
         #endregion
+
         #region Create
         [HttpGet]
         public IActionResult Create()
@@ -94,6 +96,7 @@ namespace IKEA.PL.Controllers
            
         }
         #endregion
+
         #region Update
         [HttpGet]
         public IActionResult Edit(int? id)

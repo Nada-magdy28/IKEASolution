@@ -27,8 +27,8 @@ namespace IKEA.BLL.Services.EmployeeServices
                 Salary = E.Salary,
                 IsActive = E.IsActive,
                 Email = E.Email,
-                Gender = nameof(E.Gender),
-                EmployeeType = nameof(E.EmployeeType),
+                Gender = E.Gender,
+                EmployeeType =E.EmployeeType,
             }).ToList();
         }
         public EmployeeDetailsDto? GetEmployeeById(int id)

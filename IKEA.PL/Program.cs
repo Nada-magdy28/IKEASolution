@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Builder;
 using IKEA.BLL.Services.DepartmentServices;
 using IKEA.DAL.persistance.Reposatrios.Employees;
+using IKEA.BLL.Services.EmployeeServices;
 
 namespace IKEA.PL
 {
@@ -24,7 +25,7 @@ namespace IKEA.PL
             });
             builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
             builder.Services.AddScoped<IDepartmentServices,DepartmentServices>();
-
+            builder.Services.AddScoped<IEmployeeServices, EmployeeServices>();
             builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 
             //builder.Services.AddScoped<ApplictionDbContext>();
