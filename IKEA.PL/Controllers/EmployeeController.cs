@@ -2,6 +2,7 @@
 using IKEA.BLL.Dto_s.Employees;
 using IKEA.BLL.Services.DepartmentServices;
 using IKEA.BLL.Services.EmployeeServices;
+using IKEA.DAL.Models.Employees;
 using Microsoft.AspNetCore.Mvc;
 
 namespace IKEA.PL.Controllers
@@ -27,10 +28,29 @@ namespace IKEA.PL.Controllers
             return View(Employees);
         }
         #endregion
+        #region Details
+        [HttpGet]
+        public IActionResult Details(int? id)
+        {
+            var employee =employeeService.GetEmployeeById(id.Value);
+            if (id is null)
+            {
+                return BadRequest();
+            }
+            if (employee is null)
+            {
+                return NotFound();
+            }
+            return View(employee);
+        }
+
+
+        #endregion
         #region Create
         [HttpGet]
         public IActionResult Create()
         {
+           
             return View();
         }
         [HttpPost]
@@ -67,6 +87,108 @@ namespace IKEA.PL.Controllers
             ModelState.AddModelError(string.Empty, Massage);
             return View(employeeDto);
 
+        }
+        #endregion
+        #region Update
+        [HttpGet]
+        public IActionResult Edit(int? id)
+        {
+            var Employee = employeeService.GetEmployeeById(id.Value);
+            if (id is null)
+            {
+                return BadRequest();
+            }
+            if (Employee is null)
+            {
+                return NotFound();
+            }
+            var MappedEmployee = new UpdateEmployeeDto
+            {
+                Id = Employee.Id,
+                Name = Employee.Name,
+                Age = Employee.Age,
+                Address = Employee.Address,
+                HiringDate = Employee.HiringDate,
+                Email = Employee.Email,
+                PhoneNumber = Employee.PhoneNumber,
+                Salary = Employee.Salary,
+                IsActive = Employee.IsActive,
+                Gender = Employee.Gender,
+                EmployeeType = Employee.EmployeeType,
+
+            };
+            return View(MappedEmployee);
+        }
+        [HttpPost]
+        public IActionResult Edit(UpdateEmployeeDto employeeDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(employeeDto);
+            }
+            var Massage = string.Empty;
+            try
+            {
+                var result = employeeService.UpdateEmployee(employeeDto);
+                if (result > 0)
+                {
+                    return RedirectToAction(nameof(Index));
+                }
+                else
+                {
+                    Massage = "Employee is not Updated";
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, ex.Message);
+                Massage = environment.IsDevelopment() ? ex.Message : "An Error Effectf at the Update opration";
+
+
+
+            }
+            ModelState.AddModelError(string.Empty, Massage);
+            return View(employeeDto);
+        }
+        #endregion
+        #region Delete
+        [HttpGet]
+        public IActionResult Delete(int? id)
+        {
+            var Employee = employeeService.GetEmployeeById(id.Value);
+            if (id is null)
+            {
+                return BadRequest();
+            }
+            if (Employee is null)
+            {
+                return NotFound();
+            }
+            return View(Employee);
+        }
+        [HttpPost]
+        public IActionResult Delete(int empId)
+        {
+            var Massage = string.Empty;
+            try
+            {
+                var IsDeleted = employeeService.DeleteEmployee(empId);
+                if (IsDeleted)
+                {
+                    return RedirectToAction(nameof(Index));
+                }
+                else
+                {
+                    Massage = "Employee is not Deleted";
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, ex.Message);
+                Massage = environment.IsDevelopment() ? ex.Message : "An Error Effectf at the Delete opration";
+            }
+            ModelState.AddModelError(string.Empty, Massage);
+            return RedirectToAction(nameof(Delete), new { id = empId });
         }
         #endregion
     }

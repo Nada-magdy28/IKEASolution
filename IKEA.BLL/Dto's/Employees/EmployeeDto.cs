@@ -16,7 +16,7 @@ namespace IKEA.BLL.Dto_s.Employees
         [DataType(DataType.Currency)]
         public decimal? Salary { get; set; }
         [Display(Name = "Is Active")]
-        public bool? IsActive { get; set; }
+        public bool IsActive { get; set; }
         [DataType(DataType.EmailAddress)]
         public string? Email { get; set; }
         

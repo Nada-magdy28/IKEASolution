@@ -10,7 +10,7 @@ namespace IKEA.DAL.persistance.Reposatrios._Generic
 {
     public interface IGenericRepository<T> where T : ModelBase
     {
-        IEnumerable<T> GetALL(bool WithNoTarcking = true);
+        IQueryable<T> GetALL(bool WithNoTarcking = true);
         T GetById(int id);
         int Add(T entity);
         int Update(T entity);

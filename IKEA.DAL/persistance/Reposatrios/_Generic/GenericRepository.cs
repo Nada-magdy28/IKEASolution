@@ -18,12 +18,12 @@ namespace IKEA.DAL.persistance.Reposatrios._Generic
             dbContext = context;
         }
 
-        public IEnumerable<T> GetALL(bool WithNoTarcking = true)
+        public IQueryable<T> GetALL(bool WithNoTarcking = true)
         {
             if (WithNoTarcking)
-                return dbContext.Set<T>().Where(D => D.IsDeleted == false).AsNoTracking().ToList();
+                return dbContext.Set<T>().AsNoTracking();
 
-            return dbContext.Set<T>().Where(D => D.IsDeleted == false).ToList();
+            return dbContext.Set<T>();
         }
 
         public T? GetById(int id)
