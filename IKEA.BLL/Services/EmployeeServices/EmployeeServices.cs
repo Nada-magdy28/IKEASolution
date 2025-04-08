@@ -7,20 +7,23 @@ using IKEA.BLL.Dto_s.Employees;
 using IKEA.DAL.Common.Enums;
 using IKEA.DAL.Models.Employees;
 using IKEA.DAL.persistance.Reposatrios.Employees;
+using IKEA.DAL.persistance.UnitOfWork;
 using Microsoft.EntityFrameworkCore;
 
 namespace IKEA.BLL.Services.EmployeeServices
 {
     public class EmployeeServices : IEmployeeServices
     {
-        private readonly IEmployeeRepository repository;
-        public EmployeeServices(IEmployeeRepository employeeRepository)
+        
+        private readonly IUnitOfWork unitOfWork;
+
+        public EmployeeServices(IUnitOfWork unitOfWork)
         {
-            repository = employeeRepository;
+            this.unitOfWork = unitOfWork;
         }
         public IEnumerable<EmployeeDto> GetAllEmployees(string search)
         {
-            var Employees = repository.GetALL();
+            var Employees =unitOfWork.EmployeeRepository.GetALL();
 
             var FilterdEmployee = Employees.Where(E => E.IsDeleted && (string.IsNullOrEmpty(search) ||E.Name.ToLower().Contains(search.ToLower()))).Include(E=>E.Department);
             var AfterFilteration=FilterdEmployee.Select(static E => new EmployeeDto()
@@ -39,7 +42,7 @@ namespace IKEA.BLL.Services.EmployeeServices
         }
         public EmployeeDetailsDto? GetEmployeeById(int id)
         {
-            var employee = repository.GetById(id);
+            var employee =unitOfWork.EmployeeRepository.GetById(id);
             if (employee is not null)
             {
                 return new EmployeeDetailsDto()
@@ -87,7 +90,8 @@ namespace IKEA.BLL.Services.EmployeeServices
                 LastModifiedOn = DateTime.Now,
 
             };
-            return repository.Add(Employee);
+            unitOfWork.EmployeeRepository.Add(Employee);
+            return unitOfWork.Complete();
         }
         public int UpdateEmployee(UpdateEmployeeDto employeeDto)
         {
@@ -109,16 +113,20 @@ namespace IKEA.BLL.Services.EmployeeServices
                 LastModifiedOn = DateTime.Now,
 
             };
-            return repository.Update(Employee);
+               unitOfWork.EmployeeRepository.Update(Employee);
+            return unitOfWork.Complete();
         }
 
         public bool DeleteEmployee(int id)
         {
-            var employee = repository.GetById(id);
+            var employee =unitOfWork.EmployeeRepository.GetById(id);
             // int result = 0;
             if (employee is not null)
 
-                return repository.Delete(employee) > 0;
+                unitOfWork.EmployeeRepository.Delete(employee) ;
+            var result = unitOfWork.Complete();
+            if (result > 0)
+                return true;
 
 
             else

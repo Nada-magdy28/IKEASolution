@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Builder;
 using IKEA.BLL.Services.DepartmentServices;
 using IKEA.DAL.persistance.Reposatrios.Employees;
 using IKEA.BLL.Services.EmployeeServices;
+using IKEA.PL.Mapping;
+using IKEA.DAL.persistance.UnitOfWork;
 
 namespace IKEA.PL
 {
@@ -23,10 +25,13 @@ namespace IKEA.PL
             {
                 options.UseLazyLoadingProxies().UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
             });
-            builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
+            // builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
+            // builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
             builder.Services.AddScoped<IDepartmentServices,DepartmentServices>();
             builder.Services.AddScoped<IEmployeeServices, EmployeeServices>();
-            builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+          
+            builder.Services.AddAutoMapper(M =>M.AddProfile(typeof(MappingProfile)));
 
             //builder.Services.AddScoped<ApplictionDbContext>();
             //builder.Services.AddScoped<DbContextOptions<ApplictionDbContext>>((service) =>

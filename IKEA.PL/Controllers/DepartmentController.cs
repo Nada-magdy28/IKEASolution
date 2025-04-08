@@ -1,4 +1,5 @@
-﻿using IKEA.BLL.Dto_s.Departments;
+﻿using AutoMapper;
+using IKEA.BLL.Dto_s.Departments;
 using IKEA.BLL.Services.DepartmentServices;
 using IKEA.PL.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -8,12 +9,14 @@ namespace IKEA.PL.Controllers
     public class DepartmentController : Controller
     {
         private IDepartmentServices departmentServices;
+        private readonly IMapper mapper;
         private readonly IWebHostEnvironment environment;
         private readonly ILogger<DepartmentController> logger;
 
-        public DepartmentController(IDepartmentServices _departmentServices,ILogger<DepartmentController>logger,IWebHostEnvironment environment)
+        public DepartmentController(IDepartmentServices _departmentServices,IMapper mapper,ILogger<DepartmentController>logger,IWebHostEnvironment environment)
         {
             departmentServices = _departmentServices;
+            this.mapper = mapper;
             this.environment = environment;
             this.logger = logger;
         }
@@ -67,13 +70,14 @@ namespace IKEA.PL.Controllers
 
             try
             {
-                var departmentDto = new CreatedDepartmentDto
-                {
-                    Name = departmentVm.Name,
-                    Code = departmentVm.Code,
-                    Description = departmentVm.Description,
-                    CreationDate = departmentVm.CreationDate
-                };
+                var departmentDto= mapper.Map<DepartmentVM,CreatedDepartmentDto>(departmentVm);
+                //var departmentDto = new CreatedDepartmentDto
+                //{
+                //    Name = departmentVm.Name,
+                //    Code = departmentVm.Code,
+                //    Description = departmentVm.Description,
+                //    CreationDate = departmentVm.CreationDate
+                //};
                 var result = departmentServices.CreatedDepartment(departmentDto);
                 if (result > 0)
                 {
@@ -122,14 +126,15 @@ namespace IKEA.PL.Controllers
             {
                 return NotFound();
             }
-            var MappedDepartment = new DepartmentVM()
-            {
-                Id = Department.Id,
-                Name = Department.Name,
-                Code = Department.Code,
-                Description = Department.Description,
-                CreationDate = Department.CreationDate
-            };
+            var MappedDepartment = mapper.Map<DepartmentDetailsDto, DepartmentVM>(Department);
+            //var MappedDepartment = new DepartmentVM()
+            //{
+            //    Id = Department.Id,
+            //    Name = Department.Name,
+            //    Code = Department.Code,
+            //    Description = Department.Description,
+            //    CreationDate = Department.CreationDate
+            //};
             return View(MappedDepartment);
         }
         [HttpPost]
@@ -142,14 +147,15 @@ namespace IKEA.PL.Controllers
             var Massage = string.Empty;
             try
             {
-                var departmentDto = new UpdatedDepartmentDto
-                {
-                    Id = departmentVM.Id,
-                    Name = departmentVM.Name,
-                    Code = departmentVM.Code,
-                    Description = departmentVM.Description,
-                    CreationDate = departmentVM.CreationDate
-                };
+                var departmentDto = mapper.Map<DepartmentVM, UpdatedDepartmentDto>(departmentVM);
+                //var departmentDto = new UpdatedDepartmentDto
+                //{
+                //    Id = departmentVM.Id,
+                //    Name = departmentVM.Name,
+                //    Code = departmentVM.Code,
+                //    Description = departmentVM.Description,
+                //    CreationDate = departmentVM.CreationDate
+                //};
                 var result = departmentServices.UpdateDepartment(departmentDto);
                 if (result > 0)
                 {

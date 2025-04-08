@@ -34,22 +34,22 @@ namespace IKEA.DAL.persistance.Reposatrios._Generic
             //    Department = dbContext.Departments.FirstOrDefault(x => x.Id == id);
             return item;
         }
-        public int Add(T item)
+        public void Add(T item)
         {
             dbContext.Set<T>().Add(item);
-            return dbContext.SaveChanges();
+            
         }
-        public int Update(T item)
+        public void Update(T item)
         {
             dbContext.Set<T>().Update(item);
-            return dbContext.SaveChanges();
+            
         }
 
-        public int Delete(T item)
+        public void Delete(T item)
         {
             item.IsDeleted = true;
             dbContext.Set<T>().Update(item);
-            return dbContext.SaveChanges();
+            
         }
     }
 }

@@ -12,8 +12,8 @@ namespace IKEA.DAL.persistance.Reposatrios._Generic
     {
         IQueryable<T> GetALL(bool WithNoTarcking = true);
         T GetById(int id);
-        int Add(T entity);
-        int Update(T entity);
-        int Delete(T entity);
+        void Add(T entity);
+        void Update(T entity);
+        void Delete(T entity);
     }
 }
