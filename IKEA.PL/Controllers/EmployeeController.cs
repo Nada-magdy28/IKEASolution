@@ -4,6 +4,7 @@ using IKEA.BLL.Services.DepartmentServices;
 using IKEA.BLL.Services.EmployeeServices;
 using IKEA.DAL.Models.Employees;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace IKEA.PL.Controllers
 {
@@ -13,7 +14,7 @@ namespace IKEA.PL.Controllers
         private readonly IEmployeeServices employeeService;
         private readonly ILogger<EmployeeController> logger;
         private readonly IWebHostEnvironment environment;
-        public EmployeeController(IEmployeeServices employeeService, ILogger<EmployeeController> logger, IWebHostEnvironment environment)
+        public EmployeeController(IEmployeeServices employeeService,IDepartmentServices departmentServices, ILogger<EmployeeController> logger, IWebHostEnvironment environment)
         {
             this.employeeService = employeeService;
             this.logger = logger;
@@ -22,9 +23,10 @@ namespace IKEA.PL.Controllers
         #endregion
         #region Index
         [HttpGet]
-        public IActionResult Index()
+        public IActionResult Index(string search)
         {
-            var Employees = employeeService.GetAllEmployees();
+            var Employees = employeeService.GetAllEmployees(search);
+            //ViewData["Title"] = " Hello Employees";
             return View(Employees);
         }
         #endregion
@@ -147,6 +149,7 @@ namespace IKEA.PL.Controllers
 
 
             }
+            
             ModelState.AddModelError(string.Empty, Massage);
             return View(employeeDto);
         }

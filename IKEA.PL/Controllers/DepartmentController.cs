@@ -1,5 +1,6 @@
 ﻿using IKEA.BLL.Dto_s.Departments;
 using IKEA.BLL.Services.DepartmentServices;
+using IKEA.PL.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace IKEA.PL.Controllers
@@ -21,6 +22,9 @@ namespace IKEA.PL.Controllers
         public IActionResult Index()
         {
             var Departments = departmentServices.GetAllDepartments();
+           // ViewData["Massage"] = " Hello Departments";
+             //ViewBag.Massage = "Hello from vb";
+
             return View(Departments);
         }
         #endregion
@@ -51,28 +55,36 @@ namespace IKEA.PL.Controllers
             return View();
         }
         [HttpPost]
-        public IActionResult Create(CreatedDepartmentDto departmentDto)
+        [ValidateAntiForgeryToken]
+        public IActionResult Create(DepartmentVM departmentVm)
         {
             if (!ModelState.IsValid)
             {
-                return View(departmentDto);
+                return View(departmentVm);
             }
             var Massage =string.Empty;
            
 
             try
             {
+                var departmentDto = new CreatedDepartmentDto
+                {
+                    Name = departmentVm.Name,
+                    Code = departmentVm.Code,
+                    Description = departmentVm.Description,
+                    CreationDate = departmentVm.CreationDate
+                };
                 var result = departmentServices.CreatedDepartment(departmentDto);
                 if (result > 0)
                 {
+                    TempData["Massage"] = $"{departmentDto.Name}Department Created Successfully";
                     return RedirectToAction(nameof(Index));
                 }
 
                 else
                 {
                     Massage = "Department is not created";
-                    ModelState.AddModelError(string.Empty, Massage);
-                    return View(departmentDto);
+                   
                 }
             }
             catch (Exception ex)
@@ -81,19 +93,19 @@ namespace IKEA.PL.Controllers
                 if (environment.IsDevelopment())
                 {
                     Massage = ex.Message;
-                    ModelState.AddModelError(string.Empty, Massage);
-                    return View(departmentDto);
+                  
                 }
                 else
                 {
                     Massage = "An Error Effectf at the creation opration";
-                    ModelState.AddModelError(string.Empty, Massage);
-                    return View(departmentDto);
+                   
                 }
 
             }
-            
-           
+            ModelState.AddModelError(string.Empty, Massage);
+            return View(departmentVm);
+
+
         }
         #endregion
 
@@ -110,7 +122,7 @@ namespace IKEA.PL.Controllers
             {
                 return NotFound();
             }
-            var MappedDepartment = new UpdatedDepartmentDto
+            var MappedDepartment = new DepartmentVM()
             {
                 Id = Department.Id,
                 Name = Department.Name,
@@ -121,15 +133,23 @@ namespace IKEA.PL.Controllers
             return View(MappedDepartment);
         }
         [HttpPost]
-        public IActionResult Edit(UpdatedDepartmentDto departmentDto)
+        public IActionResult Edit(DepartmentVM departmentVM)
         {
             if (!ModelState.IsValid)
             {
-                return View(departmentDto);
+                return View(departmentVM);
             }
             var Massage = string.Empty;
             try
             {
+                var departmentDto = new UpdatedDepartmentDto
+                {
+                    Id = departmentVM.Id,
+                    Name = departmentVM.Name,
+                    Code = departmentVM.Code,
+                    Description = departmentVM.Description,
+                    CreationDate = departmentVM.CreationDate
+                };
                 var result = departmentServices.UpdateDepartment(departmentDto);
                 if (result > 0)
                 {
@@ -149,7 +169,7 @@ namespace IKEA.PL.Controllers
 
             }
             ModelState.AddModelError(string.Empty, Massage);
-            return View(departmentDto);
+            return View(departmentVM);
         }
         #endregion
         #region Delete

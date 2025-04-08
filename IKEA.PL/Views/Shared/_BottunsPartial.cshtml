@@ -1,0 +1,19 @@
+﻿@model int
+<td>
+	<a  asp-action="Details" asp-route-id="@Model" class="btn btn-warning">
+		<i class="fas fe-eye"></i>Details
+	</a>
+</td>
+<td>
+	<a  asp-action="Edit" asp-route-id="@Model" class="btn btn-success">
+		<i class="fas fe-edit"></i>Update 
+	</a>
+</td>
+<td>
+	 <a  asp-action="Delete" asp-route-id="@Model" class="btn btn-danger">
+							<i class="fas fe-trash"></i>Delete
+							</a>  
+					@*	<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#DeleteDepartment">
+		<i class="fas fe-trash"></i>Delete
+	</button>*@
+</td>
