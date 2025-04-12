@@ -3,11 +3,13 @@ using IKEA.BLL.Dto_s.Employees;
 using IKEA.BLL.Services.DepartmentServices;
 using IKEA.BLL.Services.EmployeeServices;
 using IKEA.DAL.Models.Employees;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace IKEA.PL.Controllers
 {
+    
     public class EmployeeController : Controller
     {
         #region Services - DI
@@ -23,18 +25,18 @@ namespace IKEA.PL.Controllers
         #endregion
         #region Index
         [HttpGet]
-        public IActionResult Index(string search)
+        public async Task<IActionResult> Index(string? search)
         {
-            var Employees = employeeService.GetAllEmployees(search);
+            var Employees =await employeeService.GetAllEmployees(search);
             //ViewData["Title"] = " Hello Employees";
             return View(Employees);
         }
         #endregion
         #region Details
         [HttpGet]
-        public IActionResult Details(int? id)
+        public async Task<IActionResult> Details(int? id)
         {
-            var employee =employeeService.GetEmployeeById(id.Value);
+            var employee =await employeeService.GetEmployeeById(id.Value);
             if (id is null)
             {
                 return BadRequest();
@@ -56,18 +58,33 @@ namespace IKEA.PL.Controllers
             return View();
         }
         [HttpPost]
-        public IActionResult Create(CreateEmployeeDto employeeDto)
+        public async Task<IActionResult> Create(CreateEmployeeDto employeeVM)
         {
             if (!ModelState.IsValid)
             {
-                return View(employeeDto);
+                return View(employeeVM);
             }
             var Massage = string.Empty;
 
 
             try
             {
-                var result = employeeService.CreatedEmployee(employeeDto);
+                var employeeDto = new CreateEmployeeDto()
+                {
+                    Name = employeeVM.Name,
+                    Age = employeeVM.Age,
+                    Address = employeeVM.Address,
+                    Salary = employeeVM.Salary,
+                    IsActive = employeeVM.IsActive,
+                    Email = employeeVM.Email,
+                    PhoneNumber = employeeVM.PhoneNumber,
+                    Gender = employeeVM.Gender,
+                    EmployeeType = employeeVM.EmployeeType,
+                    HiringDate = employeeVM.HiringDate,
+                    DepartmentId = employeeVM.DepartmentId,
+                    Image = employeeVM.Image
+                };
+                var result = await employeeService.CreatedEmployee(employeeDto);
                 if (result > 0)
                     return RedirectToAction(nameof(Index));
 
@@ -87,15 +104,15 @@ namespace IKEA.PL.Controllers
 
             }
             ModelState.AddModelError(string.Empty, Massage);
-            return View(employeeDto);
+            return View(employeeVM);
 
         }
         #endregion
         #region Update
         [HttpGet]
-        public IActionResult Edit(int? id)
+        public async Task<IActionResult> Edit(int? id)
         {
-            var Employee = employeeService.GetEmployeeById(id.Value);
+            var Employee =await employeeService.GetEmployeeById(id.Value);
             if (id is null)
             {
                 return BadRequest();
@@ -117,12 +134,13 @@ namespace IKEA.PL.Controllers
                 IsActive = Employee.IsActive,
                 Gender = Employee.Gender,
                 EmployeeType = Employee.EmployeeType,
+                ImageName = Employee.ImageName,
 
             };
             return View(MappedEmployee);
         }
         [HttpPost]
-        public IActionResult Edit(UpdateEmployeeDto employeeDto)
+        public async Task<IActionResult> Edit(UpdateEmployeeDto employeeDto)
         {
             if (!ModelState.IsValid)
             {
@@ -131,7 +149,7 @@ namespace IKEA.PL.Controllers
             var Massage = string.Empty;
             try
             {
-                var result = employeeService.UpdateEmployee(employeeDto);
+                var result =await employeeService.UpdateEmployee(employeeDto);
                 if (result > 0)
                 {
                     return RedirectToAction(nameof(Index));
@@ -156,9 +174,9 @@ namespace IKEA.PL.Controllers
         #endregion
         #region Delete
         [HttpGet]
-        public IActionResult Delete(int? id)
+        public async Task<IActionResult> Delete(int? id)
         {
-            var Employee = employeeService.GetEmployeeById(id.Value);
+            var Employee = await employeeService.GetEmployeeById(id.Value);
             if (id is null)
             {
                 return BadRequest();
@@ -170,12 +188,12 @@ namespace IKEA.PL.Controllers
             return View(Employee);
         }
         [HttpPost]
-        public IActionResult Delete(int empId)
+        public async Task<IActionResult> Delete(int empId)
         {
             var Massage = string.Empty;
             try
             {
-                var IsDeleted = employeeService.DeleteEmployee(empId);
+                var IsDeleted =await employeeService.DeleteEmployee(empId);
                 if (IsDeleted)
                 {
                     return RedirectToAction(nameof(Index));

@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 
 namespace IKEA.BLL.Dto_s.Employees
 {
@@ -21,5 +22,6 @@ namespace IKEA.BLL.Dto_s.Employees
         public string EmployeeType { get; set; } = null!;
         [Display(Name = "Department")]
         public int? DepartmentId { get; set; }
+        public IFormFile? Image { get; set; }
     }
 }

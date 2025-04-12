@@ -21,6 +21,7 @@ namespace IKEA.BLL.Dto_s.Employees
         public string Gender { get; set; } = null!;
         public string EmployeeType { get; set; } = null!;
         public string? Department { get; set; }
+        public string? ImageName { get; set; }
         #region Adminstrator
         public int CreatedBy { get; set; }
         public DateTime CreatedOn { get; set; }

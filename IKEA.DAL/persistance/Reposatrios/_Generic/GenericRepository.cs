@@ -26,9 +26,9 @@ namespace IKEA.DAL.persistance.Reposatrios._Generic
             return dbContext.Set<T>();
         }
 
-        public T? GetById(int id)
+        public async Task<T?> GetById(int id)
         {
-            var item = dbContext.Set<T>().Find(id);
+            var item =await dbContext.Set<T>().FindAsync(id);
             //var Department = dbContext.Departments.Local.FirstOrDefault(x => x.Id == id);
             //if (Department == null)
             //    Department = dbContext.Departments.FirstOrDefault(x => x.Id == id);

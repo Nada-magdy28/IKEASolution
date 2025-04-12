@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using IKEA.BLL.Common.Services.Attachments;
 using IKEA.BLL.Dto_s.Employees;
 using IKEA.DAL.Common.Enums;
 using IKEA.DAL.Models.Employees;
@@ -16,14 +17,16 @@ namespace IKEA.BLL.Services.EmployeeServices
     {
         
         private readonly IUnitOfWork unitOfWork;
+        private readonly IAttachmentServices attachmentServices;
 
-        public EmployeeServices(IUnitOfWork unitOfWork)
+        public EmployeeServices(IUnitOfWork unitOfWork,IAttachmentServices attachmentServices)
         {
             this.unitOfWork = unitOfWork;
+            this.attachmentServices = attachmentServices;
         }
-        public IEnumerable<EmployeeDto> GetAllEmployees(string search)
+        public async Task<IEnumerable<EmployeeDto>> GetAllEmployees(string search)
         {
-            var Employees =unitOfWork.EmployeeRepository.GetALL();
+            var Employees = unitOfWork.EmployeeRepository.GetALL();
 
             var FilterdEmployee = Employees.Where(E => E.IsDeleted && (string.IsNullOrEmpty(search) ||E.Name.ToLower().Contains(search.ToLower()))).Include(E=>E.Department);
             var AfterFilteration=FilterdEmployee.Select(static E => new EmployeeDto()
@@ -38,11 +41,11 @@ namespace IKEA.BLL.Services.EmployeeServices
                 EmployeeType =E.EmployeeType,
                 Department = E.Department.Name ?? "N/A",
             });
-            return AfterFilteration.ToList();
+            return await AfterFilteration.ToListAsync();
         }
-        public EmployeeDetailsDto? GetEmployeeById(int id)
+        public async Task<EmployeeDetailsDto>? GetEmployeeById(int id)
         {
-            var employee =unitOfWork.EmployeeRepository.GetById(id);
+            var employee =await  unitOfWork.EmployeeRepository.GetById(id);
             if (employee is not null)
             {
                 return new EmployeeDetailsDto()
@@ -62,14 +65,15 @@ namespace IKEA.BLL.Services.EmployeeServices
                     LastModifiedOn = employee.LastModifiedOn,
                     CreatedBy = employee.CreatedBy,
                     CreatedOn = employee.CreatedOn,
-                    Department = employee.Department.Name ?? "N/A"
+                    Department = employee.Department.Name ?? "N/A",
+                    ImageName = employee.ImageName,
 
 
                 };
             }
             return null;
         }
-        public int CreatedEmployee(CreateEmployeeDto employeeDto)
+        public async Task<int> CreatedEmployee(CreateEmployeeDto employeeDto)
         {
             var Employee = new Employee()
             {
@@ -90,10 +94,16 @@ namespace IKEA.BLL.Services.EmployeeServices
                 LastModifiedOn = DateTime.Now,
 
             };
+            if(employeeDto.Image is not null)
+            {
+               Employee.ImageName = attachmentServices.UploadImage(employeeDto.Image, "image");
+            }
+
+
             unitOfWork.EmployeeRepository.Add(Employee);
-            return unitOfWork.Complete();
+            return await unitOfWork.Complete();
         }
-        public int UpdateEmployee(UpdateEmployeeDto employeeDto)
+        public async Task<int> UpdateEmployee(UpdateEmployeeDto employeeDto)
         {
             var Employee = new Employee()
             {
@@ -111,21 +121,35 @@ namespace IKEA.BLL.Services.EmployeeServices
                 DepartmentId = employeeDto.DepartmentId,
                 LastModifiedBy = 1,
                 LastModifiedOn = DateTime.Now,
+                ImageName = employeeDto.ImageName,
 
             };
-               unitOfWork.EmployeeRepository.Update(Employee);
-            return unitOfWork.Complete();
+
+            if (employeeDto.Image is not null)
+            {
+                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "files", "images", employeeDto.ImageName);
+                attachmentServices.DeleteImage(filePath);
+            }
+            Employee.ImageName = attachmentServices.UploadImage(employeeDto.Image, "image");
+
+            unitOfWork.EmployeeRepository.Update(Employee);
+            return await unitOfWork.Complete();
         }
 
-        public bool DeleteEmployee(int id)
+        public async Task<bool> DeleteEmployee(int id)
         {
-            var employee =unitOfWork.EmployeeRepository.GetById(id);
+            var employee = await unitOfWork.EmployeeRepository.GetById(id);
             // int result = 0;
             if (employee is not null)
-
-                unitOfWork.EmployeeRepository.Delete(employee) ;
-            var result = unitOfWork.Complete();
-            if (result > 0)
+            { 
+                if(employee.ImageName is not null)
+                {
+                    var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot","files" ,"images", employee.ImageName);
+                    attachmentServices.DeleteImage(filePath);
+                }
+                unitOfWork.EmployeeRepository.Delete(employee);
+            }
+           if(await unitOfWork.Complete() > 0)
                 return true;
 
 

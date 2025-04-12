@@ -11,7 +11,7 @@ namespace IKEA.DAL.persistance.Reposatrios._Generic
     public interface IGenericRepository<T> where T : ModelBase
     {
         IQueryable<T> GetALL(bool WithNoTarcking = true);
-        T GetById(int id);
+        Task<T> GetById(int id);
         void Add(T entity);
         void Update(T entity);
         void Delete(T entity);

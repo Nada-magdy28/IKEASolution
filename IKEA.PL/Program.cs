@@ -8,6 +8,10 @@ using IKEA.DAL.persistance.Reposatrios.Employees;
 using IKEA.BLL.Services.EmployeeServices;
 using IKEA.PL.Mapping;
 using IKEA.DAL.persistance.UnitOfWork;
+using IKEA.BLL.Common.Services.Attachments;
+using Microsoft.Extensions.Hosting.Internal;
+using Microsoft.AspNetCore.Identity;
+using IKEA.DAL.Models.Identity;
 
 namespace IKEA.PL
 {
@@ -25,12 +29,39 @@ namespace IKEA.PL
             {
                 options.UseLazyLoadingProxies().UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
             });
+            builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+            {
+                
+               
+                options.Password.RequiredLength = 5;
+                //options.Password.RequireDigit = true;
+                //options.Password.RequireLowercase = true;
+                //options.Password.RequireUppercase = true;
+                //options.Password.RequireNonAlphanumeric = true;
+                //options.Password.RequiredUniqueChars = 1;
+
+                //options.User.RequireUniqueEmail = true;
+
+                //options.Lockout.AllowedForNewUsers = true;
+                //options.Lockout.MaxFailedAccessAttempts = 5;
+                //options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+            }).AddEntityFrameworkStores<ApplicationDbContext>();
+
+            builder.Services.AddAuthentication().AddCookie(options =>
+            {
+                options.LoginPath = "/Account/Login";
+                options.AccessDeniedPath = "/Home/Erorr";
+                options.ExpireTimeSpan = TimeSpan.FromDays(2);
+                options.ForwardSignOut = "/Account/Logout";
+            });
+
             // builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
             // builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
             builder.Services.AddScoped<IDepartmentServices,DepartmentServices>();
             builder.Services.AddScoped<IEmployeeServices, EmployeeServices>();
-          
+            builder.Services.AddScoped<IAttachmentServices, AttachmentServices>();
+
             builder.Services.AddAutoMapper(M =>M.AddProfile(typeof(MappingProfile)));
 
             //builder.Services.AddScoped<ApplictionDbContext>();
@@ -61,7 +92,9 @@ namespace IKEA.PL
 
             app.UseRouting();
 
-           
+            app.UseAuthentication();
+            app.UseAuthorization();
+
 
             app.MapControllerRoute(
                 name: "default",

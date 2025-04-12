@@ -2,10 +2,12 @@
 using IKEA.BLL.Dto_s.Departments;
 using IKEA.BLL.Services.DepartmentServices;
 using IKEA.PL.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace IKEA.PL.Controllers
 {
+    
     public class DepartmentController : Controller
     {
         private IDepartmentServices departmentServices;
@@ -22,9 +24,9 @@ namespace IKEA.PL.Controllers
         }
         #region Index
         [HttpGet]
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var Departments = departmentServices.GetAllDepartments();
+            var Departments =await departmentServices.GetAllDepartments();
            // ViewData["Massage"] = " Hello Departments";
              //ViewBag.Massage = "Hello from vb";
 
@@ -34,9 +36,9 @@ namespace IKEA.PL.Controllers
 
         #region Details
         [HttpGet]
-        public IActionResult Details(int? id)
+        public async Task<IActionResult> Details(int? id)
         {
-            var Department = departmentServices.GetDepartmentById(id.Value);
+            var Department =await departmentServices.GetDepartmentById(id.Value);
             if (id is null )
             {
                 return BadRequest();
@@ -59,7 +61,7 @@ namespace IKEA.PL.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(DepartmentVM departmentVm)
+        public async Task<IActionResult> Create(DepartmentVM departmentVm)
         {
             if (!ModelState.IsValid)
             {
@@ -78,7 +80,7 @@ namespace IKEA.PL.Controllers
                 //    Description = departmentVm.Description,
                 //    CreationDate = departmentVm.CreationDate
                 //};
-                var result = departmentServices.CreatedDepartment(departmentDto);
+                var result =await departmentServices.CreatedDepartment(departmentDto);
                 if (result > 0)
                 {
                     TempData["Massage"] = $"{departmentDto.Name}Department Created Successfully";
@@ -115,9 +117,9 @@ namespace IKEA.PL.Controllers
 
         #region Update
         [HttpGet]
-        public IActionResult Edit(int? id)
+        public async Task<IActionResult> Edit(int? id)
         {
-            var Department = departmentServices.GetDepartmentById(id.Value);
+            var Department =await departmentServices.GetDepartmentById(id.Value);
             if (id is null)
             {
                 return BadRequest();
@@ -138,7 +140,7 @@ namespace IKEA.PL.Controllers
             return View(MappedDepartment);
         }
         [HttpPost]
-        public IActionResult Edit(DepartmentVM departmentVM)
+        public async Task<IActionResult> Edit(DepartmentVM departmentVM)
         {
             if (!ModelState.IsValid)
             {
@@ -156,7 +158,7 @@ namespace IKEA.PL.Controllers
                 //    Description = departmentVM.Description,
                 //    CreationDate = departmentVM.CreationDate
                 //};
-                var result = departmentServices.UpdateDepartment(departmentDto);
+                var result =await departmentServices.UpdateDepartment(departmentDto);
                 if (result > 0)
                 {
                     return RedirectToAction(nameof(Index));
@@ -180,9 +182,9 @@ namespace IKEA.PL.Controllers
         #endregion
         #region Delete
         [HttpGet]
-        public IActionResult Delete(int? id)
+        public async Task<IActionResult> Delete(int? id)
         {
-            var Department = departmentServices.GetDepartmentById(id.Value);
+            var Department =await departmentServices.GetDepartmentById(id.Value);
             if (id is null)
             {
                 return BadRequest();
@@ -194,12 +196,12 @@ namespace IKEA.PL.Controllers
             return View(Department);
         }
         [HttpPost]
-        public IActionResult Delete(int DeptId)
+        public async Task< IActionResult> Delete(int DeptId)
         {
             var Massage = string.Empty;
             try
             {
-                var IsDeleted = departmentServices.DeleteDepartment(DeptId);
+                var IsDeleted =await departmentServices.DeleteDepartment(DeptId);
                 if (IsDeleted)
                 {
                     return RedirectToAction(nameof(Index));

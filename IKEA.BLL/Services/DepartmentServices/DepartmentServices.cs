@@ -8,6 +8,7 @@ using IKEA.BLL.Services.DepartmentServices;
 using IKEA.DAL.Models.Departments;
 using IKEA.DAL.persistance.Reposatrios.Departments;
 using IKEA.DAL.persistance.UnitOfWork;
+using Microsoft.EntityFrameworkCore;
 
 namespace IKEA.BLL.Services.DepartmentServices
 {
@@ -21,15 +22,15 @@ namespace IKEA.BLL.Services.DepartmentServices
             
             this.unitOfWork = unitOfWork;
         }
-        public IEnumerable<DepartmentDto> GetAllDepartments()
+        public async Task<IEnumerable<DepartmentDto>> GetAllDepartments()
         {
-            var Departments =unitOfWork.DepartmentRepository.GetALL().Where(D=>!D.IsDeleted).Select(dept =>new  DepartmentDto() 
+            var Departments = await unitOfWork.DepartmentRepository.GetALL().Where(D=>!D.IsDeleted).Select(dept =>new  DepartmentDto() 
             {
                 Id = dept.Id,
                 Name = dept.Name,
                 Code = dept.Code,
                 CreationDate = dept.CreationDate,
-            }).ToList();
+            }).ToListAsync();
             return Departments;
 
             //List<DepartmentDto> departmentDtos = new List<DepartmentDto>();
@@ -46,9 +47,9 @@ namespace IKEA.BLL.Services.DepartmentServices
             //}
 
         }
-        public DepartmentDetailsDto? GetDepartmentById(int id)
+        public async Task<DepartmentDetailsDto>? GetDepartmentById(int id)
         {
-            var Department = unitOfWork.DepartmentRepository.GetById(id);
+            var Department =await unitOfWork.DepartmentRepository.GetById(id);
             if (Department is not null)
                 return new DepartmentDetailsDto()
                 {
@@ -67,7 +68,7 @@ namespace IKEA.BLL.Services.DepartmentServices
             return null;
         }
 
-        public int CreatedDepartment(CreatedDepartmentDto department)
+        public async Task<int> CreatedDepartment(CreatedDepartmentDto department)
         {
            var CreatedDepartment = new Department()
            {
@@ -82,9 +83,9 @@ namespace IKEA.BLL.Services.DepartmentServices
 
            };
              unitOfWork.DepartmentRepository.Add(CreatedDepartment);
-            return unitOfWork.Complete();
+            return await unitOfWork.Complete();
         }
-        public int UpdateDepartment(UpdatedDepartmentDto department)
+        public async Task<int> UpdateDepartment(UpdatedDepartmentDto department)
         {
            var UpdatedDepartment = new Department()
            {
@@ -100,21 +101,20 @@ namespace IKEA.BLL.Services.DepartmentServices
 
            };
             unitOfWork.DepartmentRepository.Update(UpdatedDepartment);
-            return unitOfWork.Complete();
+            return await unitOfWork.Complete();
         }
-        public bool DeleteDepartment(int id)
+        public async Task<bool> DeleteDepartment(int id)
         {
-            var Department = unitOfWork.DepartmentRepository.GetById(id);
+            var Department =await unitOfWork.DepartmentRepository.GetById(id);
            // int result = 0;
             if (Department is not null)
 
                 unitOfWork.DepartmentRepository.Delete(Department);
             var result = unitOfWork.Complete();
-            if (result > 0)
+            if (await unitOfWork.Complete() > 0)
+            {
                 return true;
-
-
-
+            }
             else
             return false;
         }
