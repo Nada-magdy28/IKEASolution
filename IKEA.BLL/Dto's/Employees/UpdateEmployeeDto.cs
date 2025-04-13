@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using IKEA.DAL.Common.Enums;
 using Microsoft.AspNetCore.Http;
 
 namespace IKEA.BLL.Dto_s.Employees
@@ -19,8 +20,8 @@ namespace IKEA.BLL.Dto_s.Employees
         public string? Email { get; set; }
         public string? PhoneNumber { get; set; }
         public DateOnly? HiringDate { get; set; }
-        public string Gender { get; set; } = null!;
-        public string EmployeeType { get; set; } = null!;
+        public Gender Gender { get; set; }
+        public EmployeeType EmployeeType { get; set; } 
         [Display(Name = "Department")]
         public int? DepartmentId { get; set; }
         public string? ImageName { get; set; }

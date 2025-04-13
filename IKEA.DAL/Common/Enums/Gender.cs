@@ -8,8 +8,7 @@ namespace IKEA.DAL.Common.Enums
 {
     public enum Gender
     {
-        male= 1,
-        female= 2,
-        Enum = 3,
+        Male= 1,
+        Female= 2,
     }
 }
